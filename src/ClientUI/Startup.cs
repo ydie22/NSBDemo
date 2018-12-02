@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace WebApplication1
+﻿namespace ClientUI
 {
-	using ClientUI;
 	using Messages;
+	using Microsoft.AspNetCore.Builder;
+	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.AspNetCore.Http;
+	using Microsoft.AspNetCore.Mvc;
+	using Microsoft.Extensions.Configuration;
+	using Microsoft.Extensions.DependencyInjection;
 	using NServiceBus;
 
 	public class Startup
 	{
-
 		IEndpointInstance _endpointInstance;
 
 		public Startup(IConfiguration configuration)
@@ -25,28 +18,29 @@ namespace WebApplication1
 			Configuration = configuration;
 		}
 
-		public IConfiguration Configuration { get; }
+		IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.Configure<CookiePolicyOptions>(options =>
 			{
-					// This lambda determines whether user consent for non-essential cookies is needed for a given request.
-					options.CheckConsentNeeded = context => true;
+				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
+				options.CheckConsentNeeded = context => true;
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
 			var endpointConfiguration = new EndpointConfiguration("ClientUI");
 
-			var transport = endpointConfiguration.UseTransport<LearningTransport>();
-
-			var routing = transport.Routing();
-			routing.RouteToEndpoint(typeof(PlaceOrder), "Sales");
+			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+			transport.UseConventionalRoutingTopology();
+			transport.ConnectionString("host=localhost;username=guest;password=guest");
+			transport.Routing().RouteToEndpoint(typeof(PlaceOrder), "Sales");
+			endpointConfiguration.EnableInstallers();
 
 			_endpointInstance = Endpoint.Start(endpointConfiguration)
 				.ConfigureAwait(false).GetAwaiter().GetResult();
-			
+
 			services.AddSingleton(_endpointInstance);
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
@@ -69,8 +63,8 @@ namespace WebApplication1
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(
-						 name: "default",
-						 template: "{controller=Home}/{action=Index}/{id?}");
+					name: "default",
+					template: "{controller=Home}/{action=Index}/{id?}");
 			});
 
 			applicationLifetime.ApplicationStopped.Register(() => _endpointInstance?.Stop().GetAwaiter().GetResult());
@@ -78,7 +72,6 @@ namespace WebApplication1
 			//RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 			//ControllerBuilder.Current.SetControllerFactory(new InjectEndpointInstanceIntoController(_endpointInstance));
-
 		}
 	}
 }

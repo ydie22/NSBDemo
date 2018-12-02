@@ -1,27 +1,30 @@
-﻿using System;
-using System.Threading.Tasks;
-using NServiceBus;
-
-namespace Billing
+﻿namespace Billing
 {
-    class Program
-    {
-        static async Task Main()
-        {
-            Console.Title = "Billing";
+	using System;
+	using System.Threading.Tasks;
+	using NServiceBus;
 
-            var endpointConfiguration = new EndpointConfiguration("Billing");
+	class Program
+	{
+		static async Task Main()
+		{
+			Console.Title = "Billing";
 
-            endpointConfiguration.UseTransport<LearningTransport>();
+			var endpointConfiguration = new EndpointConfiguration("Billing");
 
-            var endpointInstance = await Endpoint.Start(endpointConfiguration)
-                .ConfigureAwait(false);
+			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+			transport.UseConventionalRoutingTopology();
+			transport.ConnectionString("host=localhost;username=guest;password=guest");
+			endpointConfiguration.EnableInstallers();
 
-            Console.WriteLine("Press Enter to exit.");
-            Console.ReadLine();
+			var endpointInstance = await Endpoint.Start(endpointConfiguration)
+				.ConfigureAwait(false);
 
-            await endpointInstance.Stop()
-                .ConfigureAwait(false);
-        }
-    }
+			Console.WriteLine("Press Enter to exit.");
+			Console.ReadLine();
+
+			await endpointInstance.Stop()
+				.ConfigureAwait(false);
+		}
+	}
 }

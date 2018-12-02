@@ -12,7 +12,7 @@ namespace Billing
 
         public Task Handle(OrderPlaced message, IMessageHandlerContext context)
         {
-            log.Info($"Billing has received OrderPlaced, OrderId = {message.OrderId}");
+            log.Info($"Billing has received OrderPlaced, OrderId = {message.OrderId}. Sending invoice to customer");
             return Task.CompletedTask;
         }
     }
