@@ -1,12 +1,12 @@
 ﻿using System.Dynamic;
 using System.Threading;
-using System.Web.Mvc;
 
 namespace ClientUI.Controllers
 {
     using System;
     using System.Threading.Tasks;
     using Messages;
+    using Microsoft.AspNetCore.Mvc;
     using NServiceBus;
 
     public class HomeController : Controller
