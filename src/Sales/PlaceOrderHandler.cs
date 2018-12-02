@@ -7,14 +7,14 @@ using NServiceBus.Logging;
 namespace Sales
 {
     public class PlaceOrderHandler :
-        IHandleMessages<PlaceOrder>
+        IHandleMessages<PlaceOrderCommand>
     {
         static ILog log = LogManager.GetLogger<PlaceOrderHandler>();
         static Random random = new Random();
 
-        public Task Handle(PlaceOrder message, IMessageHandlerContext context)
+        public Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
         {
-            log.Info($"Received PlaceOrder, OrderId = {message.OrderId}");
+            log.Info($"Received PlaceOrderCommand, OrderId = {message.OrderId}");
 
             // This is normally where some business logic would occur
 
@@ -29,12 +29,12 @@ namespace Sales
             // Uncomment to test throwing fatal exceptions
             //throw new Exception("BOOM");
 
-            var orderPlaced = new OrderPlaced
+            var orderPlaced = new OrderPlacedEvent
             {
                 OrderId = message.OrderId
             };
             
-            log.Info($"Publishing OrderPlaced, OrderId = {message.OrderId}");
+            log.Info($"Publishing OrderPlacedEvent, OrderId = {message.OrderId}");
             
             return context.Publish(orderPlaced);
         }

@@ -30,7 +30,7 @@ namespace ClientUI.Controllers
         {
             var orderId = Guid.NewGuid().ToString().Substring(0, 8);
 
-            var command = new PlaceOrder { OrderId = orderId };
+            var command = new PlaceOrderCommand { OrderId = orderId };
 
             // Send the command
             await _endpointInstance.Send(command)

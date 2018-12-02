@@ -35,8 +35,13 @@
 			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
 			transport.UseConventionalRoutingTopology();
 			transport.ConnectionString("host=localhost;username=guest;password=guest");
-			transport.Routing().RouteToEndpoint(typeof(PlaceOrder), "Sales");
+			transport.Routing().RouteToEndpoint(typeof(PlaceOrderCommand), "Sales");
 			endpointConfiguration.EnableInstallers();
+			var conventions = endpointConfiguration.Conventions();
+			conventions.DefiningCommandsAs(
+				type => type.Name.EndsWith("Command"));
+			conventions.DefiningEventsAs(
+				type => type.Name.EndsWith("Event"));
 
 			_endpointInstance = Endpoint.Start(endpointConfiguration)
 				.ConfigureAwait(false).GetAwaiter().GetResult();

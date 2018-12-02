@@ -6,13 +6,13 @@ using NServiceBus.Logging;
 namespace Billing
 {
     public class OrderPlacedHandler :
-        IHandleMessages<OrderPlaced>
+        IHandleMessages<OrderPlacedEvent>
     {
         static ILog log = LogManager.GetLogger<OrderPlacedHandler>();
 
-        public Task Handle(OrderPlaced message, IMessageHandlerContext context)
+        public Task Handle(OrderPlacedEvent message, IMessageHandlerContext context)
         {
-            log.Info($"Billing has received OrderPlaced, OrderId = {message.OrderId}. Sending invoice to customer");
+            log.Info($"Billing has received OrderPlacedEvent, OrderId = {message.OrderId}. Sending invoice to customer");
             return Task.CompletedTask;
         }
     }

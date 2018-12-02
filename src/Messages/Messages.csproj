@@ -3,7 +3,4 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="NServiceBus" Version="7.1.4" />
-  </ItemGroup>
 </Project>

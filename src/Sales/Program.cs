@@ -16,6 +16,12 @@
 			transport.UseConventionalRoutingTopology();
 			transport.ConnectionString("host=localhost;username=guest;password=guest");
 			endpointConfiguration.EnableInstallers();
+			var conventions = endpointConfiguration.Conventions();
+			conventions.DefiningCommandsAs(
+				type => type.Name.EndsWith("Command"));
+			conventions.DefiningEventsAs(
+				type => type.Name.EndsWith("Event"));
+
 			var endpointInstance = await Endpoint.Start(endpointConfiguration)
 				.ConfigureAwait(false);
 
