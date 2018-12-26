@@ -1,30 +1,17 @@
-﻿using System;
-
-namespace Shipping
+﻿namespace Shipping
 {
+	using System;
 	using System.Threading.Tasks;
-	using NServiceBus;
+	using Sales;
 
 	class Program
 	{
 		static async Task Main(string[] args)
 		{
-			Console.Title = "Shipping";
+			var endpointName = "Shipping";
+			Console.Title = endpointName;
 
-			var endpointConfiguration = new EndpointConfiguration("Shipping");
-
-			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-			transport.UseConventionalRoutingTopology();
-			transport.ConnectionString("host=localhost");
-			endpointConfiguration.EnableInstallers();
-			var conventions = endpointConfiguration.Conventions();
-			conventions.DefiningCommandsAs(
-				type => type.Name.EndsWith("Command"));
-			conventions.DefiningEventsAs(
-				type => type.Name.EndsWith("Event"));
-
-			var endpointInstance = await Endpoint.Start(endpointConfiguration)
-				.ConfigureAwait(false);
+			var endpointInstance = await BusConfigurator.ConfigureAndStartEndpointInstance(endpointName);
 
 			await Console.Out.WriteLineAsync("Press Enter to exit.");
 			await Console.In.ReadLineAsync();

@@ -3,27 +3,16 @@
 	using System;
 	using System.Threading.Tasks;
 	using NServiceBus;
+	using Sales;
 
 	class Program
 	{
 		static async Task Main()
 		{
-			Console.Title = "Billing";
+			var endpointName = "Billing";
+			Console.Title = endpointName;
 
-			var endpointConfiguration = new EndpointConfiguration("Billing");
-
-			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-			transport.UseConventionalRoutingTopology();
-			transport.ConnectionString("host=localhost;username=guest;password=guest");
-			endpointConfiguration.EnableInstallers();
-			var conventions = endpointConfiguration.Conventions();
-			conventions.DefiningCommandsAs(
-				type => type.Name.EndsWith("Command"));
-			conventions.DefiningEventsAs(
-				type => type.Name.EndsWith("Event"));
-
-			var endpointInstance = await Endpoint.Start(endpointConfiguration)
-				.ConfigureAwait(false);
+			var endpointInstance = await BusConfigurator.ConfigureAndStartEndpointInstance(endpointName);
 
 			Console.WriteLine("Press Enter to exit.");
 			Console.ReadLine();

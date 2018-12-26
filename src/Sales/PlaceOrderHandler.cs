@@ -1,6 +1,7 @@
 ﻿namespace Sales
 {
 	using System.Threading.Tasks;
+	using Dapper;
 	using Messages;
 	using NServiceBus;
 	using NServiceBus.Logging;
@@ -10,7 +11,7 @@
 	{
 		static ILog log = LogManager.GetLogger<PlaceOrderHandler>();
 
-		public Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
+		public async Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
 		{
 			log.Info($"Received PlaceOrderCommand, OrderId = {message.OrderId}");
 
@@ -36,7 +37,10 @@
 
 			log.Info($"Publishing OrderPlacedEvent, OrderId = {message.OrderId}");
 
-			return context.Publish(orderPlaced);
+			var tx = context.SynchronizedStorageSession.SqlPersistenceSession().Transaction;
+			await tx.Connection.ExecuteAsync("INSERT INTO Orders VALUES(@Id)", new {Id = message.OrderId}, tx);
+
+			await context.Publish(orderPlaced);
 		}
 	}
 }
