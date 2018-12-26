@@ -30,6 +30,7 @@
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
+			// Configure NServiceBus
 			var endpointConfiguration = new EndpointConfiguration("ClientUI");
 
 			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
@@ -73,10 +74,6 @@
 			});
 
 			applicationLifetime.ApplicationStopped.Register(() => _endpointInstance?.Stop().GetAwaiter().GetResult());
-
-			//RouteConfig.RegisterRoutes(RouteTable.Routes);
-
-			//ControllerBuilder.Current.SetControllerFactory(new InjectEndpointInstanceIntoController(_endpointInstance));
 		}
 	}
 }

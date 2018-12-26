@@ -1,23 +1,11 @@
 ﻿@model dynamic
 @{
     ViewBag.Title = "Order placed";
-    // Want to keep this info out of the controller to make controller more understandable
-    if (Model.MessagesSent < 5)
-    {
-        Model.ShowForm = false;
-        Model.LeftWidth = 12;
-    }
-    else
-    {
-        Model.ShowForm = true;
-        Model.LeftWidth = 7;
-        Model.RightWidth = 5;
-    }
 }
 
 <div class="container">
     <div class="row">
-        <div class="col-md-@Model.LeftWidth">
+        <div class="col-md-12">
             <div class="card my-4">
                 <form action="/home/placeorder" method="POST">
                     <div class="card-body">
@@ -35,7 +23,6 @@
                 </form>
             </div>
         </div>
-        @if (Model.ShowForm) { Html.RenderPartial("_LicenseForm"); }
     </div>
 </div>
 

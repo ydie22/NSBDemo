@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Messages;
 using NServiceBus;
 using NServiceBus.Logging;
@@ -10,7 +9,6 @@ namespace Sales
         IHandleMessages<PlaceOrderCommand>
     {
         static ILog log = LogManager.GetLogger<PlaceOrderHandler>();
-        static Random random = new Random();
 
         public Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
         {
