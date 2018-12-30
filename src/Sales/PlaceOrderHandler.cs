@@ -1,5 +1,6 @@
 ﻿namespace Sales
 {
+	using System;
 	using System.Threading.Tasks;
 	using Dapper;
 	using Messages;
@@ -40,7 +41,15 @@
 			var tx = context.SynchronizedStorageSession.SqlPersistenceSession().Transaction;
 			await tx.Connection.ExecuteAsync("INSERT INTO Orders VALUES(@Id)", new {Id = message.OrderId}, tx);
 
-			await context.Publish(orderPlaced);
+			var publishOptions = new PublishOptions();
+			// it is difficult to simulate a failure after transaction commit
+			// but before message dispatching. Therefore, we can force immediate dispatch
+			// to avoid batching and dispatching after commit.
+			// This is a sign that NSB is already rather robust without enabling the Outbox
+			//publishOptions.RequireImmediateDispatch();
+			await context.Publish(orderPlaced, publishOptions);
+
+			//throw new Exception("Exploded");
 		}
 	}
 }
