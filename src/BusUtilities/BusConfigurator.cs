@@ -20,10 +20,10 @@
 			persist.SqlDialect<SqlDialect.MsSqlServer>();
 			persist.ConnectionBuilder(() => new SqlConnection($"Server=localhost;Initial catalog={endpointName};User Id={endpointName};Password={endpointName}"));
 
-			// comment the next three lines to disable the outbox
-			//var outboxSettings = endpointConfiguration.EnableOutbox();
-			//outboxSettings.KeepDeduplicationDataFor(TimeSpan.FromDays(6));
-			//outboxSettings.RunDeduplicationDataCleanupEvery(TimeSpan.FromMinutes(15));
+			// comment out the next three lines to disable the outbox
+			var outboxSettings = endpointConfiguration.EnableOutbox();
+			outboxSettings.KeepDeduplicationDataFor(TimeSpan.FromDays(6));
+			outboxSettings.RunDeduplicationDataCleanupEvery(TimeSpan.FromMinutes(15));
 
 			var conventions = endpointConfiguration.Conventions();
 			conventions.DefiningCommandsAs(

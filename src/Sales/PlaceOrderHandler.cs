@@ -39,7 +39,7 @@
 			log.Info($"Publishing OrderPlacedEvent, OrderId = {message.OrderId}");
 
 			var tx = context.SynchronizedStorageSession.SqlPersistenceSession().Transaction;
-			await tx.Connection.ExecuteAsync("INSERT INTO Orders VALUES(@Id)", new {Id = message.OrderId}, tx);
+			await tx.Connection.ExecuteAsync("INSERT INTO Orders (Id) VALUES(@Id)", new {Id = message.OrderId}, tx);
 
 			var publishOptions = new PublishOptions();
 			// it is difficult to simulate a failure after transaction commit
