@@ -1,4 +1,4 @@
-﻿namespace Sales
+﻿namespace BusUtilities
 {
 	using System;
 	using System.Data.SqlClient;
@@ -14,7 +14,7 @@
 
 			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
 			transport.UseConventionalRoutingTopology();
-			transport.ConnectionString("host=localhost");
+			transport.ConnectionString("host=localhost;RequestedHeartbeat=600");
 
 			var persist = endpointConfiguration.UsePersistence<SqlPersistence, StorageType.Outbox>();
 			persist.SqlDialect<SqlDialect.MsSqlServer>();
@@ -32,6 +32,9 @@
 				type => type.Name.EndsWith("Event"));
 
 			endpointConfiguration.EnableInstallers();
+
+			endpointConfiguration.Pipeline.Register(typeof(LoggingBehavior), "Logs incoming messages");
+
 			var endpointInstance = await Endpoint.Start(endpointConfiguration)
 				.ConfigureAwait(false);
 			return endpointInstance;

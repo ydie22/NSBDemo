@@ -2,9 +2,9 @@
 {
 	using System;
 	using System.Threading.Tasks;
-	using Sales;
+	using BusUtilities;
 
-	class Program
+	internal class Program
 	{
 		static async Task Main(string[] args)
 		{

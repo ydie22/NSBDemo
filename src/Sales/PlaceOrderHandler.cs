@@ -1,6 +1,5 @@
 ﻿namespace Sales
 {
-	using System;
 	using System.Threading.Tasks;
 	using Dapper;
 	using Messages;
@@ -10,7 +9,7 @@
 	public class PlaceOrderHandler :
 		IHandleMessages<PlaceOrderCommand>
 	{
-		static ILog log = LogManager.GetLogger<PlaceOrderHandler>();
+		static readonly ILog log = LogManager.GetLogger<PlaceOrderHandler>();
 
 		public async Task Handle(PlaceOrderCommand message, IMessageHandlerContext context)
 		{

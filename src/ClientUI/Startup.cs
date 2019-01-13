@@ -1,5 +1,6 @@
 ﻿namespace ClientUI
 {
+	using BusUtilities;
 	using Messages;
 	using Microsoft.AspNetCore.Builder;
 	using Microsoft.AspNetCore.Hosting;
@@ -35,9 +36,12 @@
 
 			var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
 			transport.UseConventionalRoutingTopology();
-			transport.ConnectionString("host=localhost;username=guest;password=guest");
+			transport.ConnectionString("host=localhost");
+			// this routing config is only needed for this endpoint, as it is
+			// the only one to send this command message
 			transport.Routing().RouteToEndpoint(typeof(PlaceOrderCommand), "Sales");
 			endpointConfiguration.EnableInstallers();
+			endpointConfiguration.Pipeline.Register(typeof(LoggingBehavior), "Logs incoming messages");
 			var conventions = endpointConfiguration.Conventions();
 			conventions.DefiningCommandsAs(
 				type => type.Name.EndsWith("Command"));
@@ -69,8 +73,8 @@
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
+					"default",
+					"{controller=Home}/{action=Index}/{id?}");
 			});
 
 			applicationLifetime.ApplicationStopped.Register(() => _endpointInstance?.Stop().GetAwaiter().GetResult());

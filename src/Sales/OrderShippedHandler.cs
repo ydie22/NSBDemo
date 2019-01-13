@@ -6,10 +6,10 @@
 	using NServiceBus;
 	using NServiceBus.Logging;
 
-	public class OrderShippedHandler:IHandleMessages<OrderShippedEvent>
+	public class OrderShippedHandler : IHandleMessages<OrderShippedEvent>
 	{
-		static ILog log = LogManager.GetLogger<OrderShippedHandler>();
 		const int SHIPPED = 1;
+		static readonly ILog log = LogManager.GetLogger<OrderShippedHandler>();
 
 		public Task Handle(OrderShippedEvent message, IMessageHandlerContext context)
 		{

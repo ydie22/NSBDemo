@@ -8,7 +8,7 @@
 	public class OrderPlacedHandler :
 		IHandleMessages<OrderPlacedEvent>
 	{
-		static ILog log = LogManager.GetLogger<OrderPlacedHandler>();
+		static readonly ILog log = LogManager.GetLogger<OrderPlacedHandler>();
 
 		public Task Handle(OrderPlacedEvent message, IMessageHandlerContext context)
 		{
